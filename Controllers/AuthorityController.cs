@@ -16,104 +16,105 @@ namespace WorkFvApi.Controllers
     [ApiController]
     public class AuthorityController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        
-       private readonly IAuthorityService _authorityService;
-        
+        // private readonly IMapper _mapper;
 
-        public AuthorityController(IMapper mapper, IAuthorityService authorityService)
-        {
-            
-            _mapper = mapper;
-            _authorityService = authorityService;
-        }
+        // private readonly IAuthorityService _authorityService;
+
+
+        // public AuthorityController(IMapper mapper, IAuthorityService authorityService)
+        // {
+
+        //     _mapper = mapper;
+        //     _authorityService = authorityService;
+        // }
 
         // GET: api/Authority
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<AuthorityDto>>> GetAuthorities()
-        {
-            var authority = await _authorityService.GetAllAsync();
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<AuthorityDto>>> GetAuthorities()
+        // {
+        //     var authority = await _authorityService.GetAllAsync();
 
-            // Veritabanında hiç personel yoksa NotFound dön
-            if (authority == null || !authority.Any())
-            {
-                return NotFound("Personel bulunamadı.");
-            }
+        //     // Veritabanında hiç personel yoksa NotFound dön
+        //     if (authority == null || !authority.Any())
+        //     {
+        //         return NotFound("Personel bulunamadı.");
+        //     }
 
-            var personelDto = _mapper.Map<List<AuthorityMapper>>(authority);
-            return Ok(personelDto);
-        }
+        //     var personelDto = _mapper.Map<List<AuthorityMapper>>(authority);
+        //     return Ok(personelDto);
+        // }
 
         // GET: api/Authority/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AuthorityDto>> GetAuthority(int id)
-        {
-            var authority = await _authorityService.GetByIdAsync(id);
+        // [HttpGet("{id}")]
+        // public async Task<ActionResult<AuthorityDto>> GetAuthority(int id)
+        // {
+        //     var authority = await _authorityService.GetByIdAsync(id);
 
-            if (authority == null)
-            {
-                return NotFound($"ID {id} olan authority bulunamadı.");
-            }
+        //     if (authority == null)
+        //     {
+        //         return NotFound($"ID {id} olan authority bulunamadı.");
+        //     }
 
-            var authorityDto = _mapper.Map<AuthorityDto>(authority);
-            return Ok(authorityDto);
-        }
+        //     var authorityDto = _mapper.Map<AuthorityDto>(authority);
+        //     return Ok(authorityDto);
+        // }
 
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAuthority(int id,[FromBody] Authority authority)
-        {
-            if (id != authority.AuthoritiesId)
-            {
-                return BadRequest("Güncellenmek istenen authority ID'si uyuşmuyor.");
-            }
+        // [HttpPut("{id}")]
+        // public async Task<IActionResult> UpdateAuthority(int id,[FromBody] Authority authority)
+        // {
+        //     if (id != authority.AuthoritiesId)
+        //     {
+        //         return BadRequest("Güncellenmek istenen authority ID'si uyuşmuyor.");
+        //     }
 
-            // Personel veritabanında var mı?
-            var existingAuthority = await _authorityService.GetByIdAsync(id);
-            if (existingAuthority == null)
-            {
-                return NotFound("Güncellenmek istenen personel bulunamadı.");
-            }
+        //     // Personel veritabanında var mı?
+        //     var existingAuthority = await _authorityService.GetByIdAsync(id);
+        //     if (existingAuthority == null)
+        //     {
+        //         return NotFound("Güncellenmek istenen personel bulunamadı.");
+        //     }
 
-            // Güncelleme işlemi
-            var isUpdated = await _authorityService.UpdateAsync(authority);
-            if (!isUpdated)
-            {
-                return StatusCode(500, "Authority güncellenirken bir hata oluştu.");
-            }
+        //     // Güncelleme işlemi
+        //     var isUpdated = await _authorityService.UpdateAsync(authority);
+        //     if (!isUpdated)
+        //     {
+        //         return StatusCode(500, "Authority güncellenirken bir hata oluştu.");
+        //     }
 
-            return NoContent();
-            
-        }
+        //     return NoContent();
 
-       
-        [HttpPost]
-        public async Task<ActionResult<Authority>> PostAuthority([FromBody] Authority authority)
-        {
-            var createdAuthority = await _authorityService.CreateAsync(authority);
+        // }
 
-            if (createdAuthority == null)
-            {
-                return BadRequest("Authority oluşturulamadı.");
-            }
 
-            return CreatedAtAction(nameof(GetAuthorities), new { id = createdAuthority.AuthoritiesId }, createdAuthority);
-        }
+        // [HttpPost]
+        // public async Task<ActionResult<Authority>> PostAuthority([FromBody] Authority authority)
+        // {
+        //     var createdAuthority = await _authorityService.CreateAsync(authority);
+
+        //     if (createdAuthority == null)
+        //     {
+        //         return BadRequest("Authority oluşturulamadı.");
+        //     }
+
+        //     return CreatedAtAction(nameof(GetAuthorities), new { id = createdAuthority.AuthoritiesId }, createdAuthority);
+        // }
 
         // DELETE: api/Authority/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAuthority(int id)
-        {
-            var authority = await _authorityService.DeleteAsync(id);
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeleteAuthority(int id)
+        // {
+        //     var authority = await _authorityService.DeleteAsync(id);
 
-            if (authority == null)
-            {
-                return NotFound();
-            }
+        //     if (authority == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
+        // }
     }
 }

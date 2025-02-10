@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WorkFvApi.Data;
 
-public class EntityService<T> : IEntityService<T> where T : class
+public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
     protected readonly ApplicationDbContext _context;
     private readonly DbSet<T> _dbSet;
 
-    public EntityService(ApplicationDbContext context)
+    public GenericRepository(ApplicationDbContext context)
     {
         _context = context;
         _dbSet = _context.Set<T>();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public async Task<List<T>> GetAllAsync()
     {
         return await _dbSet.ToListAsync();
     }
@@ -33,7 +33,7 @@ public class EntityService<T> : IEntityService<T> where T : class
 
     public async Task<bool> UpdateAsync(T entity)
     {
-        _context.Entry(entity).State = EntityState.Modified;
+        _dbSet.Update(entity);
         return await _context.SaveChangesAsync() > 0;
     }
 

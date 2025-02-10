@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkFvApi.Data;
-using WorkFvApi.DTO.PersonelDTO;
 using WorkFvApi.Models;
 
 namespace WorkFvApi.Controllers
@@ -32,7 +31,7 @@ namespace WorkFvApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PersonelDto>>> GetPersonel()
         {
-            var personel = await _personelService.GetAllAsync();
+            var personel = await _personelService.GetAllPersonels();
 
             // Veritabanında hiç personel yoksa NotFound dön
             if (personel == null || !personel.Any())
@@ -48,7 +47,7 @@ namespace WorkFvApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PersonelDto>> GetPersonel(int id)
         {
-            var personel = await _personelService.GetByIdAsync(id);
+            var personel = await _personelService.GetById(id);
 
             if (personel == null)
             {
@@ -61,43 +60,42 @@ namespace WorkFvApi.Controllers
 
         // PUT: api/Personel/5
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePersonel(int id, [FromBody] Personel personel)
+        [HttpPatch]
+        public async Task<IActionResult> UpdatePersonel([FromBody] PersonelDto personel)
         {
-            // URL'deki id ile gelen nesnenin ID'si eşleşmeli
-            if (id != personel.PersonelId)
-            {
-                return BadRequest("Güncellenmek istenen personelin ID'si uyuşmuyor.");
-            }
-
             // Güncellenecek personelin var olup olmadığını kontrol et
-            var existingPersonel = await _personelService.GetByIdAsync(id);
+            var existingPersonel = await _personelService.GetById(personel.PersonelId);
             if (existingPersonel == null)
             {
                 return NotFound("Güncellenmek istenen personel bulunamadı.");
             }
 
-            // Mevcut personel bilgilerini güncelle
-            existingPersonel.PersonelName = personel.PersonelName;
-            existingPersonel.PersonelUserName = personel.PersonelUserName;
-            existingPersonel.PersonelUnitId = personel.PersonelUnitId;
-            existingPersonel.PersonelAuthoritesId = personel.PersonelAuthoritesId;
-            existingPersonel.PersonelAuthorites = personel.PersonelAuthorites;
-            existingPersonel.PersonelUnit = personel.PersonelUnit;
-            existingPersonel.Works = personel.Works;
+            if (personel.PersonelName != null) existingPersonel.PersonelName = personel.PersonelName;
+            if (personel.PersonelUserName != null) existingPersonel.PersonelUserName = personel.PersonelUserName;
+            if (personel.PersonelPassword != null) existingPersonel.PersonelPassword = personel.PersonelPassword;
+            if (personel.PersonelUnitId != 0) existingPersonel.PersonelUnitId = personel.PersonelUnitId;
+            if (personel.PersonelAuthoritesId != 0) existingPersonel.PersonelAuthoritesId = personel.PersonelAuthoritesId;
+
 
             // Güncelleme işlemi
-            await _personelService.UpdateAsync(existingPersonel);
+            var result = await _personelService.Update(existingPersonel);
 
-            return NoContent();
+            if (result)
+            {
+                return Ok("Kayit Basarili");
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Personel güncellenirken bir hata oluştu.");
+
         }
 
         // POST: api/Personel
 
         [HttpPost]
-        public async Task<ActionResult<Personel>> PostPersonel([FromBody] Personel personel)
+        public async Task<ActionResult<Personel>> PostPersonel([FromBody] CreatePersonelVM personel)
         {
-            var createdPersonel = await _personelService.CreateAsync(personel);
+            var dtoModel = _mapper.Map<PersonelDto>(personel);
+            dtoModel.PersonelPassword = HashHelper.HashPassword(dtoModel.PersonelPassword);
+            var createdPersonel = await _personelService.Create(dtoModel);
 
             if (createdPersonel == null)
             {
@@ -111,14 +109,13 @@ namespace WorkFvApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePersonel(int id)
         {
-            var personel = await _personelService.DeleteAsync(id);
+            var personel = await _personelService.Delete(id);
 
-            if (personel == null)
+            if (personel)
             {
-                return NotFound();
+                return Ok("Silme Islemi Basarili");
             }
-
-            return NoContent();
+            return StatusCode(StatusCodes.Status500InternalServerError, "Personel güncellenirken bir hata oluştu.");
         }
 
 

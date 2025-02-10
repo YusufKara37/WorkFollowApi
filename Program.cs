@@ -1,21 +1,28 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGeneration.Design;
+
 using WorkFvApi.Data;
 
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using WorkFvApi.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // mapper injection
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
 
+#region  Dependecy Injections
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IAuthorityService, AuthorityService>();
+builder.Services.AddScoped<IPersonelService, PersonelService>();
+builder.Services.AddScoped<IStageService, StageSerevice>();
+builder.Services.AddScoped<IUnitService, UnitService>();
+builder.Services.AddScoped<IWorkService, WorkService>();
+#endregion
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-    
+
 
 
 
@@ -40,11 +47,7 @@ builder.Services.AddCors(option =>
             .AllowAnyMethod();
     });
 });
-builder.Services.AddScoped<IAuthorityService, AuthorityService>();
-builder.Services.AddScoped<IPersonelService, PersonelService>();
-builder.Services.AddScoped<IStageService, StageSerevice>();
-builder.Services.AddScoped<IUnitService, UnitService>();
-builder.Services.AddScoped<IWorkService, WorkService>();
+
 
 
 var app = builder.Build();
