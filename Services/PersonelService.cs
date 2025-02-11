@@ -41,6 +41,10 @@ public class PersonelService : IPersonelService
         // update islemi servise icinde yapilmali, cunku ilk basta veritabanindan mevuct kullanici getirtilecek, 
         // sonra gelen bu kullanici uzerinde degisiklik yapilip geri gonderilmeli
         // dogrudan controller da yapilirsa biraz risli olabiliyor, cunku controllerda veritabanindan gelen model ile kullanicinin gonderdigi model birbirine karisabilir.
+        // yani kisaca durum su;
+
+        // id ile veritabindan cektigimiz personeli tekrar geri gondermemiz geriyor Update fonksiyonunda, baska bir model gonderirsek hata verir, guncelleme gibi algilamaz yeni bir kullanici ekleme islemi gibi algilar.
+        // guncelleme oldugundan emin olmak icin isi burda yapacagiz.
 
         var existingPersonel = await _genericRepo.GetByIdAsync(personelDto.PersonelId); // db'den useri bulmaya calis
         if (existingPersonel == null)
