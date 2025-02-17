@@ -19,9 +19,14 @@ builder.Services.AddScoped<IWorkService, WorkService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 #endregion
 
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+if(string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection String Not Found");
+}
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString));
 
 
 
