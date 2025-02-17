@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WorkFvApi.Models;
+
 
 
 namespace WorkFvApi.DTO.WorkDTO
@@ -22,13 +18,6 @@ namespace WorkFvApi.DTO.WorkDTO
         public DateTime? WorkAndDate { get; set; }
 
         public int? WorkStageId { get; set; }
-
-        public virtual Personel? WorkPersonel { get; set; }
-
-        public virtual Stage? WorkStage { get; set; }
-        
-
-
 
     }
 }

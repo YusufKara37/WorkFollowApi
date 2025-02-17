@@ -1,7 +1,7 @@
 using AutoMapper;
-using WorkFvApi.Data;
+
 using WorkFvApi.DTO.AuthorityDTO;
-using WorkFvApi.Models;
+
 
 public class AuthorityService : IAuthorityService
 {
@@ -43,7 +43,7 @@ public class AuthorityService : IAuthorityService
         return await _genericRepo.UpdateAsync(existingAuthority);
     }
 
- 
+
 }
 
 

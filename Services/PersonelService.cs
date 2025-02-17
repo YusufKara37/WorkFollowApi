@@ -1,6 +1,6 @@
 using AutoMapper;
 
-using WorkFvApi.Models;
+
 
 public class PersonelService : IPersonelService
 {
@@ -35,9 +35,9 @@ public class PersonelService : IPersonelService
         var dmoModel = await _genericRepo.GetByIdAsync(id);
         return _mapper.Map<PersonelDto>(dmoModel);
     }
-       public async Task<PersonelDto> GetByName(string name)
+    public async Task<PersonelDto> GetByName(string name)
     {
-        var personel = await _genericRepo.GetByNameAsync(p => p.PersonelUserName == name);
+        var personel = await _genericRepo.GetByNameAsync(p => p.PersonelName == name);
 
         if (personel == null)
         {

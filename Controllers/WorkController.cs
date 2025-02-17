@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WorkFvApi.Data;
 using WorkFvApi.DTO.WorkDTO;
-using WorkFvApi.Models;
+
 
 namespace WorkFvApi.Controllers
 {
@@ -16,13 +9,13 @@ namespace WorkFvApi.Controllers
     [ApiController]
     public class WorkController : ControllerBase
     {
-        
+
         private readonly IMapper _mapper;
         private readonly IWorkService _workService;
 
-        public WorkController(ApplicationDbContext context, IMapper mapper,IWorkService workService)
+        public WorkController(ApplicationDbContext context, IMapper mapper, IWorkService workService)
         {
-            _mapper=mapper;
+            _mapper = mapper;
             _workService = workService;
         }
 
@@ -30,40 +23,40 @@ namespace WorkFvApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkDto>>> GetWorks()
         {
-            var work=await _workService.GetAllWork();
-            if (work==null || !work.Any())
+            var work = await _workService.GetAllWork();
+            if (work == null || !work.Any())
             {
                 return NotFound("Work bulunamadı");
-            } 
-            var WorkDto=_mapper.Map<List<WorkDto>>(work);
+            }
+            var WorkDto = _mapper.Map<List<WorkDto>>(work);
             return Ok(WorkDto);
 
         }
 
         // GET: api/Work/5
-       [HttpGet("get/{id}")]
-       public async Task<ActionResult<WorkDto>> GetWork(int id)
-       {
-        var work=await _workService.GetById(id);
-        if (work==null)
+        [HttpGet("get/{id}")]
+        public async Task<ActionResult<WorkDto>> GetWork(int id)
         {
-            return NotFound($"ID {id} olan work bulunamadı.");
+            var work = await _workService.GetById(id);
+            if (work == null)
+            {
+                return NotFound($"ID {id} olan work bulunamadı.");
+            }
+            var workDto = _mapper.Map<WorkDto>(work);
+            return Ok(workDto);
         }
-        var workDto=_mapper.Map<WorkDto>(work);
-        return Ok(workDto);
-       }
-       [HttpPost]
-       public async Task<ActionResult<WorkDto>> PostWork([FromBody] CreateWorkVM work)
-       {
-        var dtoModel=_mapper.Map<WorkDto>(work);
-        var createdWork=await _workService.Create(dtoModel);
+        [HttpPost]
+        public async Task<ActionResult<WorkDto>> PostWork([FromBody] CreateWorkVM work)
+        {
+            var dtoModel = _mapper.Map<WorkDto>(work);
+            var createdWork = await _workService.Create(dtoModel);
 
-        if(createdWork==null)
-        {
-            return BadRequest("Work oluşturalamı.");
+            if (createdWork == null)
+            {
+                return BadRequest("Work oluşturalamı.");
+            }
+            return Ok("Work oluşturuldu.");
+
         }
-        return CreatedAtAction(nameof(GetWork),new{id=createdWork.WorkId},createdWork);
-        
-       }
     }
 }

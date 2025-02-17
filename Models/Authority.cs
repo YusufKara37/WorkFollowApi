@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WorkFvApi.Models;
+
 
 public partial class Authority
 {

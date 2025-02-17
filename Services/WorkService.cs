@@ -1,7 +1,6 @@
 using AutoMapper;
-using WorkFvApi.Data;
 using WorkFvApi.DTO.WorkDTO;
-using WorkFvApi.Models;
+
 
 public class WorkService : IWorkService
 {
@@ -23,11 +22,11 @@ public class WorkService : IWorkService
         var dmoModel = await _genericRepo.GetByIdAsync(id);
         return _mapper.Map<WorkDto>(dmoModel);
     }
-   
-   public async Task<WorkDto> Create(WorkDto work)
-   {
-    var dmoModel=_mapper.Map<Work>(work);
-    var result = await _genericRepo.CreateAsync(dmoModel);
-    return _mapper.Map<WorkDto>(result);
-   }
+
+    public async Task<WorkDto> Create(WorkDto work)
+    {
+        var dmoModel = _mapper.Map<Work>(work);
+        var result = await _genericRepo.CreateAsync(dmoModel);
+        return _mapper.Map<WorkDto>(result);
+    }
 }

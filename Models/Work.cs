@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WorkFvApi.Models;
+
 
 public partial class Work
 {
@@ -18,6 +18,8 @@ public partial class Work
     public DateTime? WorkAndDate { get; set; }
 
     public int? WorkStageId { get; set; }
+
+    public byte[]? Photo { get; set; }
 
     public virtual Personel? WorkPersonel { get; set; }
 

@@ -1,5 +1,4 @@
 using WorkFvApi.DTO.AuthorityDTO;
-using WorkFvApi.Models;
 
 public interface IAuthorityService
 {
