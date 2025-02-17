@@ -6,9 +6,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WorkFvApi.Data;
+
 using WorkFvApi.DTO.AuthorityDTO;
-using WorkFvApi.Models;
+
 
 namespace WorkFvApi.Controllers
 {
@@ -16,26 +16,26 @@ namespace WorkFvApi.Controllers
     [ApiController]
     public class AuthorityController : ControllerBase
     {
-         private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
 
-         private readonly IAuthorityService _authorityService;
+        private readonly IAuthorityService _authorityService;
 
 
-         public AuthorityController(IMapper mapper, IAuthorityService authorityService)
-         {
+        public AuthorityController(IMapper mapper, IAuthorityService authorityService)
+        {
 
-             _mapper = mapper;
-             _authorityService = authorityService;
-         }
+            _mapper = mapper;
+            _authorityService = authorityService;
+        }
 
-       
+
     }
 }
 
-         
-
-         
 
 
-         
+
+
+
+
 

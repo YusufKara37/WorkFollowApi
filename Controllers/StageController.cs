@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
-using WorkFvApi.Data;
-using WorkFvApi.Models;
+
 
 namespace WorkFvApi.Controllers
 {

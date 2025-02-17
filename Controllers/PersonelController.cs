@@ -6,8 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WorkFvApi.Data;
-using WorkFvApi.Models;
+
 
 namespace WorkFvApi.Controllers
 {
@@ -57,17 +56,17 @@ namespace WorkFvApi.Controllers
             var personelDto = _mapper.Map<PersonelDto>(personel);
             return Ok(personelDto);
         }
-        
+
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetByName(string name)
-    {
-        var personel = await _personelService.GetByName(name);
-        if (personel == null)
         {
-            return NotFound($"'{name}' isminde bir personel bulunamadı.");
+            var personel = await _personelService.GetByName(name);
+            if (personel == null)
+            {
+                return NotFound($"'{name}' isminde bir personel bulunamadı.");
+            }
+            return Ok(personel);
         }
-        return Ok(personel);
-    }
 
         // PUT: api/Personel/5
 

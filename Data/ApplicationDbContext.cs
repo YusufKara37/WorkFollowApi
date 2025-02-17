@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using WorkFvApi.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace WorkFvApi.Data;
+
+
 
 public partial class ApplicationDbContext : DbContext
 {
@@ -18,8 +16,6 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Authority> Authorities { get; set; }
 
-  
-
     public virtual DbSet<Personel> Personels { get; set; }
 
     public virtual DbSet<Stage> Stages { get; set; }
@@ -28,7 +24,9 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Work> Works { get; set; }
 
-        
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.UseSqlServer("Name=DefaultConnection");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Authority>(entity =>
@@ -43,8 +41,6 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("authoritesName");
         });
 
-        
-
         modelBuilder.Entity<Personel>(entity =>
         {
             entity.ToTable("Personel");
@@ -55,7 +51,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("personelName");
             entity.Property(e => e.PersonelPassword)
-                .HasMaxLength(50)
+                .HasMaxLength(100)
                 .HasColumnName("personelPassword");
             entity.Property(e => e.PersonelUnitId).HasColumnName("personelUnitID");
             entity.Property(e => e.PersonelUserName)
@@ -96,9 +92,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.ToTable("Work");
 
-            entity.Property(e => e.WorkId)
-                .ValueGeneratedNever()
-                .HasColumnName("workID");
+            entity.Property(e => e.WorkId).HasColumnName("workID");
             entity.Property(e => e.WorkAndDate)
                 .HasColumnType("datetime")
                 .HasColumnName("workAndDate");
@@ -109,7 +103,6 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.WorkStartDate)
                 .HasColumnType("datetime")
                 .HasColumnName("workStartDate");
-            
 
             entity.HasOne(d => d.WorkPersonel).WithMany(p => p.Works)
                 .HasForeignKey(d => d.WorkPersonelId)
@@ -124,8 +117,4 @@ public partial class ApplicationDbContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-
-
-
 }
