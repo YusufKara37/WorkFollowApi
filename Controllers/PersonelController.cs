@@ -44,7 +44,7 @@ namespace WorkFvApi.Controllers
         }
 
         // GET: api/Personel/5
-        [HttpGet("{id}")]
+        [HttpGet("get/{id}")]
         public async Task<ActionResult<PersonelDto>> GetPersonel(int id)
         {
             var personel = await _personelService.GetById(id);
@@ -57,15 +57,39 @@ namespace WorkFvApi.Controllers
             var personelDto = _mapper.Map<PersonelDto>(personel);
             return Ok(personelDto);
         }
+        
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetByName(string name)
+    {
+        var personel = await _personelService.GetByName(name);
+        if (personel == null)
+        {
+            return NotFound($"'{name}' isminde bir personel bulunamadı.");
+        }
+        return Ok(personel);
+    }
 
         // PUT: api/Personel/5
 
         [HttpPatch]
         public async Task<IActionResult> UpdatePersonel([FromBody] PersonelDto personel)
         {
+            // Güncellenecek personelin var olup olmadığını kontrol et
+            var existingPersonel = await _personelService.GetById(personel.PersonelId);
+            if (existingPersonel == null)
+            {
+                return NotFound("Güncellenmek istenen personel bulunamadı.");
+            }
 
-            var result = await _personelService.Update(personel); // gelen personeli direk service katmanina yolluyoruz.
-            // logic (is mantigi) orda calisacak
+            if (personel.PersonelName != null) existingPersonel.PersonelName = personel.PersonelName;
+            if (personel.PersonelUserName != null) existingPersonel.PersonelUserName = personel.PersonelUserName;
+            if (personel.PersonelPassword != null) existingPersonel.PersonelPassword = personel.PersonelPassword;
+            if (personel.PersonelUnitId != 0) existingPersonel.PersonelUnitId = personel.PersonelUnitId;
+            if (personel.PersonelAuthoritesId != 0) existingPersonel.PersonelAuthoritesId = personel.PersonelAuthoritesId;
+
+
+            // Güncelleme işlemi
+            var result = await _personelService.Update(existingPersonel);
 
             if (result)
             {

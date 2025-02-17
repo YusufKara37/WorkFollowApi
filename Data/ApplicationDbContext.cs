@@ -109,6 +109,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.WorkStartDate)
                 .HasColumnType("datetime")
                 .HasColumnName("workStartDate");
+            
 
             entity.HasOne(d => d.WorkPersonel).WithMany(p => p.Works)
                 .HasForeignKey(d => d.WorkPersonelId)

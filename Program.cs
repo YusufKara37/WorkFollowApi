@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 
 #region  Dependecy Injections
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IAuthorityService, AuthorityService>();
+builder.Services.AddScoped<IAuthorityService, AuthorityService>(); 
 builder.Services.AddScoped<IPersonelService, PersonelService>();
 builder.Services.AddScoped<IStageService, StageSerevice>();
 builder.Services.AddScoped<IUnitService, UnitService>();

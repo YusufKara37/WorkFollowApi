@@ -35,6 +35,17 @@ public class PersonelService : IPersonelService
         var dmoModel = await _genericRepo.GetByIdAsync(id);
         return _mapper.Map<PersonelDto>(dmoModel);
     }
+       public async Task<PersonelDto> GetByName(string name)
+    {
+        var personel = await _genericRepo.GetByNameAsync(p => p.PersonelUserName == name);
+
+        if (personel == null)
+        {
+            return null;
+        }
+
+        return _mapper.Map<PersonelDto>(personel);
+    }
 
     public async Task<bool> Update(PersonelDto personelDto)
     {

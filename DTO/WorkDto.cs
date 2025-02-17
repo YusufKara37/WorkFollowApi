@@ -26,6 +26,9 @@ namespace WorkFvApi.DTO.WorkDTO
         public virtual Personel? WorkPersonel { get; set; }
 
         public virtual Stage? WorkStage { get; set; }
+        
+
+
 
     }
 }

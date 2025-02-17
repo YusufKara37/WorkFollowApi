@@ -16,115 +16,54 @@ namespace WorkFvApi.Controllers
     [ApiController]
     public class WorkController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        
         private readonly IMapper _mapper;
         private readonly IWorkService _workService;
 
         public WorkController(ApplicationDbContext context, IMapper mapper,IWorkService workService)
         {
             _mapper=mapper;
-            _context = context;
             _workService = workService;
         }
 
         // GET: api/Work
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Work>>> GetWorks()
+        public async Task<ActionResult<IEnumerable<WorkDto>>> GetWorks()
         {
-            return await _context.Works.ToListAsync();
+            var work=await _workService.GetAllWork();
+            if (work==null || !work.Any())
+            {
+                return NotFound("Work bulunamadı");
+            } 
+            var WorkDto=_mapper.Map<List<WorkDto>>(work);
+            return Ok(WorkDto);
+
         }
 
         // GET: api/Work/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Work>> GetWork(int id)
+       [HttpGet("get/{id}")]
+       public async Task<ActionResult<WorkDto>> GetWork(int id)
+       {
+        var work=await _workService.GetById(id);
+        if (work==null)
         {
-            var work = await _context.Works.FindAsync(id);
-
-            if (work == null)
-            {
-                return NotFound();
-            }
-
-            return work;
+            return NotFound($"ID {id} olan work bulunamadı.");
         }
+        var workDto=_mapper.Map<WorkDto>(work);
+        return Ok(workDto);
+       }
+       [HttpPost]
+       public async Task<ActionResult<WorkDto>> PostWork([FromBody] CreateWorkVM work)
+       {
+        var dtoModel=_mapper.Map<WorkDto>(work);
+        var createdWork=await _workService.Create(dtoModel);
 
-        // PUT: api/Work/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutWork(int id, Work work)
+        if(createdWork==null)
         {
-            if (id != work.WorkId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(work).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!WorkExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return BadRequest("Work oluşturalamı.");
         }
-
-        // POST: api/Work
-        [HttpPost]
-        public async Task<ActionResult<WorkDto>> PostWork(Work work)
-        {
-            _context.Works.Add(work);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (WorkExists(work.WorkId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetWork", new { id = work.WorkId }, work);
-        }
-
-   
+        return CreatedAtAction(nameof(GetWork),new{id=createdWork.WorkId},createdWork);
         
-
-        // DELETE: api/Work/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWork(int id)
-        {
-            var work = await _context.Works.FindAsync(id);
-            if (work == null)
-            {
-                return NotFound();
-            }
-
-            _context.Works.Remove(work);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool WorkExists(int id)
-        {
-            return _context.Works.Any(e => e.WorkId == id);
-        }
+       }
     }
 }
