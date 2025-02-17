@@ -1,10 +1,13 @@
 using AutoMapper;
-using WorkFvApi.Models;
 
 public class LoginService:ILoginService 
 {
      private IGenericRepository<Personel> _genericRepo;
-     private IMapper _mapper;
+
+    public LoginService(IGenericRepository<Personel> genericRepository)
+    {
+        _genericRepo = genericRepository;
+    }
 
     public async Task<bool> LoginAsync(LoginDto loginDto)
     {

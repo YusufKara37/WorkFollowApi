@@ -16,6 +16,7 @@ builder.Services.AddScoped<IPersonelService, PersonelService>();
 builder.Services.AddScoped<IStageService, StageSerevice>();
 builder.Services.AddScoped<IUnitService, UnitService>();
 builder.Services.AddScoped<IWorkService, WorkService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 #endregion
 
 

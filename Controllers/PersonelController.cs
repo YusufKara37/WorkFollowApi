@@ -101,16 +101,16 @@ namespace WorkFvApi.Controllers
         }
 
         // POST: api/Personel
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> PostLogin([FromBody] LoginDto personel)
         {
             var dtoModel=_mapper.Map<LoginDto>(personel);
             dtoModel.PersonelPassword=HashHelper.HashPassword(dtoModel.PersonelPassword);
             var result = await _loginService.LoginAsync(dtoModel);
             if (result == true){
-                return Ok("");
+                return Ok("Giris Basar");
             }
-            return BadRequest();
+            return BadRequest("Basarisiz");
 
         
             
