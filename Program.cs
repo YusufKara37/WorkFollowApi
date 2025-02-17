@@ -1,9 +1,11 @@
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 
 
 
 
 var builder = WebApplication.CreateBuilder(args);
+Env.Load();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // mapper injection
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
