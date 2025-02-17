@@ -17,12 +17,14 @@ namespace WorkFvApi.Controllers
 
         private readonly IMapper _mapper;
         private readonly IPersonelService _personelService;
+        private readonly ILoginService _loginService;
 
-        public PersonelController(IMapper mapper, IPersonelService personelService)
+        public PersonelController(IMapper mapper, IPersonelService personelService, ILoginService loginService)
         {
 
             _mapper = mapper;
             _personelService = personelService;
+            _loginService = loginService;
 
         }
 
@@ -99,9 +101,22 @@ namespace WorkFvApi.Controllers
         }
 
         // POST: api/Personel
-
         [HttpPost]
-        public async Task<ActionResult<Personel>> PostPersonel([FromBody] CreatePersonelVM personel)
+        public async Task<IActionResult> PostLogin([FromBody] LoginDto personel)
+        {
+            var dtoModel=_mapper.Map<LoginDto>(personel);
+            dtoModel.PersonelPassword=HashHelper.HashPassword(dtoModel.PersonelPassword);
+            var result = await _loginService.LoginAsync(dtoModel);
+            if (result == true){
+                return Ok("");
+            }
+            return BadRequest();
+
+        
+            
+        }
+        [HttpPost]
+        public async Task<IActionResult> PostPersonel([FromBody] CreatePersonelVM personel)
         {
             var dtoModel = _mapper.Map<PersonelDto>(personel);
             dtoModel.PersonelPassword = HashHelper.HashPassword(dtoModel.PersonelPassword);
