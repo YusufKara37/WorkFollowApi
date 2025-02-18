@@ -30,7 +30,16 @@ if(string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-
+builder.Services.AddCors(option =>
+{
+    option.AddDefaultPolicy(policy =>
+    {
+        policy
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 
 
 
@@ -59,7 +68,7 @@ builder.Services.AddCors(option =>
 
 var app = builder.Build();
 
-
+app.UseCors();
 app.MapOpenApi();
 app.UseSwagger();
 app.UseSwaggerUI();
