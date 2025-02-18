@@ -25,7 +25,18 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<Work> Works { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=DefaultConnection");
+    {
+        if(!optionsBuilder.IsConfigured) // eger connection string alinmadiysa elle ekle
+        {
+            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            if(string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Connection string null!!!");
+            }
+
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -5,11 +5,23 @@ using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
 Env.Load();
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+if(string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection String Not Found");
+}
+
+
+
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // mapper injection
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 #region  Dependecy Injections
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -21,25 +33,8 @@ builder.Services.AddScoped<IWorkService, WorkService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 #endregion
 
-var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-if(string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Connection String Not Found");
-}
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
 
-builder.Services.AddCors(option =>
-{
-    option.AddDefaultPolicy(policy =>
-    {
-        policy
-        .AllowAnyOrigin()
-        .AllowAnyHeader()
-        .AllowAnyMethod();
-    });
-});
 
 
 
@@ -52,31 +47,31 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(xmlPath);
 });
 
+  builder.Services.AddCors(option =>
+  {
+      option.AddDefaultPolicy(policy =>
+      {
+          policy
+          .AllowAnyOrigin()
+          .AllowAnyHeader()
+          .AllowAnyMethod();
+      });
+  });
 
-builder.Services.AddCors(option =>
-{
-    option.AddDefaultPolicy(policy =>
-    {
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
 
 
 
 var app = builder.Build();
 
+app.UseRouting();
 app.UseCors();
-app.MapOpenApi();
+app.UseAuthorization();
+app.UseHttpsRedirection();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseHttpsRedirection();
+app.MapOpenApi();
 app.MapControllers();
-app.UseRouting();
-app.UseAuthorization();
-app.UseCors();
+
 
 
 
