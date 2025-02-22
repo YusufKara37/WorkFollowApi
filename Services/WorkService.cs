@@ -19,8 +19,12 @@ public class WorkService : IWorkService
     }
     public async Task<WorkDto> GetById(int id)
     {
-        var dmoModel = await _genericRepo.GetByIdAsync(id);
-        return _mapper.Map<WorkDto>(dmoModel);
+        var work = await _genericRepo.GetByIdAsync(id); 
+        if (work == null)
+        {
+            return null;  
+        }
+        return _mapper.Map<WorkDto>(work);  
     }
 
     public async Task<WorkDto> Create(WorkDto work)

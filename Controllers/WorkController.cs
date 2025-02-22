@@ -35,17 +35,18 @@ namespace WorkFvApi.Controllers
         }
 
         // GET: api/Work/5
-        [HttpGet("get/{id}")]
-        public async Task<ActionResult<WorkDto>> GetWork(int id)
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<WorkDto>> GetWorkById(int id)
         {
             var work = await _workService.GetById(id);
             if (work == null)
             {
-                return NotFound($"ID {id} olan work bulunamadı.");
+                return NotFound();  
             }
-            var workDto = _mapper.Map<WorkDto>(work);
-            return Ok(workDto);
+            return Ok(work);  
         }
+        
         [HttpPost]
         public async Task<ActionResult<WorkDto>> PostWork([FromBody] CreateWorkVM work)
         {
@@ -60,20 +61,20 @@ namespace WorkFvApi.Controllers
 
         }
 
-         [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteWork(int id)
-    {
-        // Silme işlemi
-        var deletedWork = await _workService.Delete(id);
-
-        if (deletedWork == null) // Eğer iş silinemediyse
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteWork(int id)
         {
-            return NotFound(new { message = "İş bulunamadı." });
-        }
+            // Silme işlemi
+            var deletedWork = await _workService.Delete(id);
 
-        // Silme işlemi başarılı, 204 NoContent dönülür
-        return NoContent();
-    }
+            if (deletedWork == null) // Eğer iş silinemediyse
+            {
+                return NotFound(new { message = "İş bulunamadı." });
+            }
+
+            // Silme işlemi başarılı, 204 NoContent dönülür
+            return NoContent();
+        }
 
 
 
