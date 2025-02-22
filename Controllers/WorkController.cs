@@ -58,5 +58,18 @@ namespace WorkFvApi.Controllers
             return Ok("Work oluşturuldu.");
 
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteWork(int id)
+        {
+            var deletedWork = await _workService.Delete(id);
+            if (deletedWork == null)
+            {
+                return NotFound(new { message = "İş bulunamadı." });
+            }
+            return Ok(deletedWork);
+        }
+
+
     }
 }

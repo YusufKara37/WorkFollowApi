@@ -29,4 +29,21 @@ public class WorkService : IWorkService
         var result = await _genericRepo.CreateAsync(dmoModel);
         return _mapper.Map<WorkDto>(result);
     }
+    
+    public async Task<WorkDto> Delete(int workId)
+    {
+        // Önce ilgili işi veri tabanından bulalım
+        var work = await _genericRepo.GetByIdAsync(workId);
+        if (work == null)
+        {
+            return null; // Eğer iş bulunamazsa null döndür
+        }
+
+        // Silme işlemini gerçekleştir
+        await _genericRepo.DeleteAsync(workId);
+
+        // Silinen işi DTO'ya çevirip geri döndür
+        var deletedWorkDto = _mapper.Map<WorkDto>(work);
+        return deletedWorkDto;
+    }
 }
