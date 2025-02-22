@@ -32,21 +32,20 @@ public class WorkService : IWorkService
     
      public async Task<WorkDto> Delete(int id)
     {
-        // Silme işlemini repository üzerinden yapıyoruz
+        
         var isDeleted = await _genericRepo.DeleteAsync(id);
         
         if (!isDeleted)
         {
-            return null;  // İş bulunamadıysa null döneriz
+            return null;  
         }
 
-        // Silme başarılı olduğunda, DTO dönüyoruz
-        // Burada, silinen işin ID'si ile işin geri dönüşünü sağlayabilirsiniz
+        
         return new WorkDto
         {
             WorkId = id,
-            WorkName = "Silinen İş", // veya silinen işin adı
-            WorkComment = "Silinen İşin Açıklaması" // veya silinen işin açıklaması
+            WorkName = "Silinen İş", 
+            WorkComment = "Silinen İşin Açıklaması" 
         };
     }
 }
