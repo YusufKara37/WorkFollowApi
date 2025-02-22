@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using WorkFvApi.DTO.WorkDTO;
 
 
@@ -60,15 +61,13 @@ namespace WorkFvApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWork(int id)
-        {
-            var deletedWork = await _workService.Delete(id);
-            if (deletedWork == null)
-            {
-                return NotFound(new { message = "İş bulunamadı." });
-            }
-            return Ok(deletedWork);
-        }
+    public async Task<IActionResult> DeleteWork(int id)
+    {
+        var isDeleted = await _workService.Delete(id);
+        
+
+        return NoContent(); // Silme işlemi başarılı, 204 NoContent döndür
+    }
 
 
     }

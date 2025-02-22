@@ -30,20 +30,23 @@ public class WorkService : IWorkService
         return _mapper.Map<WorkDto>(result);
     }
     
-    public async Task<WorkDto> Delete(int workId)
+     public async Task<WorkDto> Delete(int id)
     {
-        // Önce ilgili işi veri tabanından bulalım
-        var work = await _genericRepo.GetByIdAsync(workId);
-        if (work == null)
+        // Silme işlemini repository üzerinden yapıyoruz
+        var isDeleted = await _genericRepo.DeleteAsync(id);
+        
+        if (!isDeleted)
         {
-            return null; // Eğer iş bulunamazsa null döndür
+            return null;  // İş bulunamadıysa null döneriz
         }
 
-        // Silme işlemini gerçekleştir
-        await _genericRepo.DeleteAsync(workId);
-
-        // Silinen işi DTO'ya çevirip geri döndür
-        var deletedWorkDto = _mapper.Map<WorkDto>(work);
-        return deletedWorkDto;
+        // Silme başarılı olduğunda, DTO dönüyoruz
+        // Burada, silinen işin ID'si ile işin geri dönüşünü sağlayabilirsiniz
+        return new WorkDto
+        {
+            WorkId = id,
+            WorkName = "Silinen İş", // veya silinen işin adı
+            WorkComment = "Silinen İşin Açıklaması" // veya silinen işin açıklaması
+        };
     }
 }
