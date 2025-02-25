@@ -61,6 +61,14 @@ public class WorkService : IWorkService
             return false;
         }
         existingWork.WorkStageId = model.StageId;
+        if(model.StageId == 4)
+        {
+            existingWork.WorkAndDate = DateTime.Now;
+        }
+        if (model.StageId == 2)
+        {
+            existingWork.WorkAndDate = null;
+        }
 
         return await _genericRepo.UpdateAsync(existingWork);
     }
