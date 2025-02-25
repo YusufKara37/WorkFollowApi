@@ -15,7 +15,7 @@ public partial class Work
 
     public DateTime? WorkStartDate { get; set; }
 
-    public DateTime? WorkAndDate { get; set; }
+    public DateTime? WorkAndDate { get; set; } = null;
 
     public int? WorkStageId { get; set; }
 
