@@ -7,6 +7,5 @@ public interface IWorkService
     Task<WorkDto> GetById(int id);
     Task<WorkDto> Create(WorkDto work);
     Task<WorkDto> Delete(int workId);
-
-
+    Task<bool> Update (UpdateWorkStage model);
 }

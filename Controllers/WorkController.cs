@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using WorkFvApi.DTO.WorkDTO;
 
@@ -74,6 +75,21 @@ namespace WorkFvApi.Controllers
 
             // Silme işlemi başarılı, 204 NoContent dönülür
             return NoContent();
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> UpdateStage(UpdateWorkStage model)
+        {
+            var isOk = await _workService.Update(model);
+            if (isOk)
+            {
+                return Ok("Guncellendir");
+            }
+            else
+            {
+                return BadRequest("HATA");
+            }
+
         }
 
 

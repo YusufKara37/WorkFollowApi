@@ -52,4 +52,16 @@ public class WorkService : IWorkService
             WorkComment = "Silinen İşin Açıklaması" 
         };
     }
+
+    public async Task<bool> Update (UpdateWorkStage model)
+    {
+        var existingWork = await _genericRepo.GetByIdAsync(model.WorkId);
+        if (existingWork == null)
+        {
+            return false;
+        }
+        existingWork.WorkStageId = model.StageId;
+
+        return await _genericRepo.UpdateAsync(existingWork);
+    }
 }
