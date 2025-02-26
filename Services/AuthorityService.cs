@@ -1,6 +1,7 @@
 using AutoMapper;
 
 using WorkFvApi.DTO.AuthorityDTO;
+using WorkFvApi.Models;
 
 
 public class AuthorityService : IAuthorityService

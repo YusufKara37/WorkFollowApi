@@ -1,11 +1,12 @@
 using AutoMapper;
 using WorkFvApi.DTO.StageDTO;
+using WorkFvApi.Models;
 
 public class StageMapper : Profile
 {
     public StageMapper()
     {
-        CreateMap<Stage, StageDto>().ReverseMap();
+        CreateMap<Stage, StageDTo>().ReverseMap();
 
     }
 }

@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-
+﻿
+using Microsoft.EntityFrameworkCore;
+using WorkFvApi.Models;
 
 
 public partial class ApplicationDbContext : DbContext
@@ -25,18 +25,7 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<Work> Works { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if(!optionsBuilder.IsConfigured) // eger connection string alinmadiysa elle ekle
-        {
-            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-            if(string.IsNullOrEmpty(connectionString))
-            {
-                throw new InvalidOperationException("Connection string null!!!");
-            }
-
-            optionsBuilder.UseSqlServer(connectionString);
-        }
-    }
+        => optionsBuilder.UseSqlServer("Name=DefaultConnection");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -104,6 +93,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("Work");
 
             entity.Property(e => e.WorkId).HasColumnName("workID");
+            entity.Property(e => e.PdfUrl).HasMaxLength(500);
             entity.Property(e => e.WorkAndDate)
                 .HasColumnType("datetime")
                 .HasColumnName("workAndDate");
@@ -121,6 +111,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasOne(d => d.WorkStage).WithMany(p => p.Works)
                 .HasForeignKey(d => d.WorkStageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Work_stages");
         });
 

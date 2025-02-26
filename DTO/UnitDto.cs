@@ -1,6 +1,10 @@
 
 
 
+
+
+using WorkFvApi.Models;
+
 namespace WorkFvApi.DTO.UnitDTO
 {
     public class UnitDto

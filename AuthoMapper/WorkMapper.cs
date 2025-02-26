@@ -1,5 +1,6 @@
 using AutoMapper;
 using WorkFvApi.DTO.WorkDTO;
+using WorkFvApi.Models;
 
 
 public class WorkMapper : Profile

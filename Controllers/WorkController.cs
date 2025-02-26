@@ -1,9 +1,11 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using Microsoft.AspNetCore.Http;
 using WorkFvApi.DTO.WorkDTO;
-
+using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
+using WorkFvApi.DTO.FileUploadDto;
 
 namespace WorkFvApi.Controllers
 {
@@ -14,11 +16,15 @@ namespace WorkFvApi.Controllers
 
         private readonly IMapper _mapper;
         private readonly IWorkService _workService;
+        private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public WorkController(ApplicationDbContext context, IMapper mapper, IWorkService workService)
+        public WorkController(ApplicationDbContext context, IMapper mapper, IWorkService workService, IWebHostEnvironment environment)
         {
+            _context = context;
             _mapper = mapper;
             _workService = workService;
+            _environment = environment;
         }
 
         // GET: api/Work
@@ -43,11 +49,11 @@ namespace WorkFvApi.Controllers
             var work = await _workService.GetById(id);
             if (work == null)
             {
-                return NotFound();  
+                return NotFound();
             }
-            return Ok(work);  
+            return Ok(work);
         }
-        
+
         [HttpPost]
         public async Task<ActionResult<WorkDto>> PostWork([FromBody] CreateWorkVM work)
         {
@@ -89,9 +95,56 @@ namespace WorkFvApi.Controllers
             {
                 return BadRequest("HATA");
             }
-
         }
 
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadPdf([FromForm] FileUploadDto model)
+        {
+            if (model.File == null || model.File.Length == 0)
+            {
+                return BadRequest("Geçerli bir PDF dosyası yükleyin.");
+            }
+
+            if (Path.GetExtension(model.File.FileName).ToLower() != ".pdf")
+            {
+                return BadRequest("Sadece PDF dosyaları yüklenebilir.");
+            }
+
+            try
+            {
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var uniqueFileName = $"{Guid.NewGuid()}.pdf";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.File.CopyToAsync(stream);
+                }
+
+                var fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{uniqueFileName}";
+
+                // 📌 PDF URL'sini veritabanına kaydet
+                var work = await _context.Works.FindAsync(model.WorkId);
+                if (work == null)
+                {
+                    return NotFound("İş bulunamadı.");
+                }
+
+                work.PdfUrl = fileUrl;
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "PDF başarıyla yüklendi!", pdfUrl = fileUrl });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
+            }
+        }
 
 
     }

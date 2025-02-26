@@ -1,10 +1,10 @@
 
-
+using WorkFvApi.Models;
 
 
 namespace WorkFvApi.DTO.StageDTO
 {
-    public class StageDto
+    public class StageDTo
     {
         public int StageId { get; set; }
 

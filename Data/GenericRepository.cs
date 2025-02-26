@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class

@@ -3,6 +3,8 @@
 
 
 
+using WorkFvApi.Models;
+
 namespace WorkFvApi.DTO.AuthorityDTO
 {
     public class AuthorityDto

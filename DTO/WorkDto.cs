@@ -16,6 +16,7 @@ namespace WorkFvApi.DTO.WorkDTO
         public DateTime? WorkStartDate { get; set; }
 
         public DateTime? WorkAndDate { get; set; } = null;
+        public string? PdfUrl { get; set; }
 
         public int? WorkStageId { get; set; }
 
