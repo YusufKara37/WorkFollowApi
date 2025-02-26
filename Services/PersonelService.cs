@@ -50,24 +50,18 @@ public class PersonelService : IPersonelService
 
     public async Task<bool> Update(PersonelDto personelDto)
     {
-        // update islemi servise icinde yapilmali, cunku ilk basta veritabanindan mevuct kullanici getirtilecek, 
-        // sonra gelen bu kullanici uzerinde degisiklik yapilip geri gonderilmeli
-        // dogrudan controller da yapilirsa biraz risli olabiliyor, cunku controllerda veritabanindan gelen model ile kullanicinin gonderdigi model birbirine karisabilir.
-        // yani kisaca durum su;
+       
 
-        // id ile veritabindan cektigimiz personeli tekrar geri gondermemiz geriyor Update fonksiyonunda, baska bir model gonderirsek hata verir, guncelleme gibi algilamaz yeni bir kullanici ekleme islemi gibi algilar.
-        // guncelleme oldugundan emin olmak icin isi burda yapacagiz.
-
-        var existingPersonel = await _genericRepo.GetByIdAsync(personelDto.PersonelId); // db'den useri bulmaya calis
+        var existingPersonel = await _genericRepo.GetByIdAsync(personelDto.PersonelId); 
         if (existingPersonel == null)
         {
-            return false; // bulamazsa false don
+            return false; 
         }
-        // bulursa ilgili alanlari tek tek kontrol edip, icinde deger olan yerleri sadece degistiyoruz
-        if (!string.IsNullOrEmpty(personelDto.PersonelName)) // PersonelName prop'u icinde bir deger gonderilmisse
-            existingPersonel.PersonelName = personelDto.PersonelName; // gelen degeri veritabanindan cektigimiz entity icine yerlesitr
+        
+        if (!string.IsNullOrEmpty(personelDto.PersonelName)) 
+            existingPersonel.PersonelName = personelDto.PersonelName; 
 
-        // asagidakiler ayni mantikla ilerliyor
+       
         if (!string.IsNullOrEmpty(personelDto.PersonelUserName))
             existingPersonel.PersonelUserName = personelDto.PersonelUserName;
 
@@ -77,10 +71,9 @@ public class PersonelService : IPersonelService
         if (personelDto.PersonelUnitId.HasValue)
             existingPersonel.PersonelUnitId = personelDto.PersonelUnitId.Value;
 
-        if (personelDto.PersonelAuthoritesId != 0) // bu prop nullable olmadigi icin hasValue kontrolu yapilmaz, cunku asla null olmayacak, en kotu ihtimalle 0 gelecek ama asla null olmayacak, 0 gelirse dokunmuyorz, 0 disinda bir degerle gelirse ayni sekilde veri tabanindan cekilen modelin icine yerlestirilecek.
+        if (personelDto.PersonelAuthoritesId != 0) 
             existingPersonel.PersonelAuthoritesId = personelDto.PersonelAuthoritesId;
 
-        return await _genericRepo.UpdateAsync(existingPersonel); // guncelleme islemini yapip true ve ya false donecek
-
+        return await _genericRepo.UpdateAsync(existingPersonel); 
     }
 }

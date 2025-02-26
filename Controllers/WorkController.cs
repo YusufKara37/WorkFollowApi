@@ -71,7 +71,7 @@ namespace WorkFvApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWork(int id)
         {
-            // Silme işlemi
+            
             var deletedWork = await _workService.Delete(id);
 
             if (deletedWork == null) // Eğer iş silinemediyse
@@ -79,7 +79,7 @@ namespace WorkFvApi.Controllers
                 return NotFound(new { message = "İş bulunamadı." });
             }
 
-            // Silme işlemi başarılı, 204 NoContent dönülür
+            
             return NoContent();
         }
 
@@ -128,7 +128,7 @@ namespace WorkFvApi.Controllers
 
                 var fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{uniqueFileName}";
 
-                // 📌 PDF URL'sini veritabanına kaydet
+                
                 var work = await _context.Works.FindAsync(model.WorkId);
                 if (work == null)
                 {
