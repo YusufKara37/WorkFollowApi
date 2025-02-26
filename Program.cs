@@ -11,7 +11,7 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("Connection String Not Found");
 }
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // Mapper injection
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
@@ -35,8 +35,6 @@ builder.Services.AddSwaggerGen(options =>
         Title = "Work API",
         Version = "v1"
     });
-
-    options.OperationFilter<FileUploadOperation>();
 });
 
 builder.Services.AddCors(option =>
@@ -52,24 +50,31 @@ builder.Services.AddCors(option =>
 
 var app = builder.Build();
 
-// 🔥 STATİK DOSYA ERİŞİMİNİ AKTİF ET 🔥
-app.UseStaticFiles(); // wwwroot içindeki statik dosyaları sunar
+// 📂 uploads klasörünü wwwroot içine taşı ve oluştur
+var uploadsPath = Path.Combine(app.Environment.WebRootPath, "uploads");
 
-// Eğer PDF dosyaları doğrudan "uploads/" klasöründe saklanıyorsa:
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+// 🖥️ Statik dosyaları sun (wwwroot içindeki her şey erişilebilir olur)
+app.UseStaticFiles();
+
+// 📂 uploads klasörüne doğrudan erişim sağla
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads")), // wwwroot/uploads
+    FileProvider = new PhysicalFileProvider(uploadsPath),
     RequestPath = "/uploads"
 });
 
 app.UseRouting();
 app.UseCors();
-app.UseAuthorization();
 app.UseHttpsRedirection();
+app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.MapOpenApi();
 app.MapControllers();
+app.MapOpenApi();
 
 app.Run();

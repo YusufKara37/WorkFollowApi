@@ -5,7 +5,7 @@ using WorkFvApi.DTO.WorkDTO;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
-using WorkFvApi.DTO.FileUploadDto;
+
 
 namespace WorkFvApi.Controllers
 {
@@ -71,7 +71,7 @@ namespace WorkFvApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWork(int id)
         {
-            
+
             var deletedWork = await _workService.Delete(id);
 
             if (deletedWork == null) // Eğer iş silinemediyse
@@ -79,7 +79,7 @@ namespace WorkFvApi.Controllers
                 return NotFound(new { message = "İş bulunamadı." });
             }
 
-            
+
             return NoContent();
         }
 
@@ -97,21 +97,18 @@ namespace WorkFvApi.Controllers
             }
         }
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadPdf([FromForm] FileUploadDto model)
+        [HttpPost("create-with-file")]
+        public async Task<IActionResult> CreateWorkWithFile([FromForm] CreateWorkVM model)
         {
-            if (model.File == null || model.File.Length == 0)
-            {
-                return BadRequest("Geçerli bir PDF dosyası yükleyin.");
-            }
+            string? fileUrl = null;
 
-            if (Path.GetExtension(model.File.FileName).ToLower() != ".pdf")
+            if (model.File != null && model.File.Length > 0)
             {
-                return BadRequest("Sadece PDF dosyaları yüklenebilir.");
-            }
+                if (Path.GetExtension(model.File.FileName).ToLower() != ".pdf")
+                {
+                    return BadRequest("Sadece PDF dosyaları yüklenebilir.");
+                }
 
-            try
-            {
                 var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
                 if (!Directory.Exists(uploadsFolder))
                 {
@@ -126,25 +123,31 @@ namespace WorkFvApi.Controllers
                     await model.File.CopyToAsync(stream);
                 }
 
-                var fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{uniqueFileName}";
-
-                
-                var work = await _context.Works.FindAsync(model.WorkId);
-                if (work == null)
-                {
-                    return NotFound("İş bulunamadı.");
-                }
-
-                work.PdfUrl = fileUrl;
-                await _context.SaveChangesAsync();
-
-                return Ok(new { message = "PDF başarıyla yüklendi!", pdfUrl = fileUrl });
+                fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{uniqueFileName}";
             }
-            catch (Exception ex)
+
+            // 📌 İş oluşturma işlemi
+            var newWork = new Models.Work
             {
-                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
-            }
+                WorkName = model.WorkName,
+                WorkComment = model.WorkComment,
+                WorkStageId = model.WorkStageId ?? 3,
+                WorkStartDate = model.WorkStartDate,
+                WorkAndDate = model.WorkAndDate,
+                PdfUrl = fileUrl // 📌 PDF URL'sini ekledik
+            };
+
+            _context.Works.Add(newWork);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "İş başarıyla eklendi!",
+                workId = newWork.WorkId,
+                pdfUrl = fileUrl
+            });
         }
+
 
 
     }
