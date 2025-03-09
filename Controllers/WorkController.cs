@@ -126,7 +126,7 @@ namespace WorkFvApi.Controllers
                 fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{uniqueFileName}";
             }
 
-            // 📌 İş oluşturma işlemi
+           
             var newWork = new Models.Work
             {
                 WorkName = model.WorkName,
@@ -134,7 +134,7 @@ namespace WorkFvApi.Controllers
                 WorkStageId = model.WorkStageId ?? 3,
                 WorkStartDate = model.WorkStartDate,
                 WorkAndDate = model.WorkAndDate,
-                PdfUrl = fileUrl // 📌 PDF URL'sini ekledik
+                PdfUrl = fileUrl 
             };
 
             _context.Works.Add(newWork);
