@@ -50,7 +50,7 @@ builder.Services.AddCors(option =>
 
 var app = builder.Build();
 
-// 📂 uploads klasörünü wwwroot içine taşı ve oluştur
+
 var uploadsPath = Path.Combine(app.Environment.WebRootPath, "uploads");
 
 if (!Directory.Exists(uploadsPath))
@@ -58,10 +58,10 @@ if (!Directory.Exists(uploadsPath))
     Directory.CreateDirectory(uploadsPath);
 }
 
-// 🖥️ Statik dosyaları sun (wwwroot içindeki her şey erişilebilir olur)
+
 app.UseStaticFiles();
 
-// 📂 uploads klasörüne doğrudan erişim sağla
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(uploadsPath),

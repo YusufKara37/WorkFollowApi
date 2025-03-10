@@ -83,7 +83,8 @@ namespace WorkFvApi.Controllers
 
             return NoContent();
         }
-        [HttpPatch]
+
+       [HttpPatch("UpdateWork")]
         public async Task<IActionResult> UpdateWork([FromBody] UpdateWork model)
         {
             var isUpdated = await _workService.UpdateWork(model);
@@ -96,7 +97,7 @@ namespace WorkFvApi.Controllers
             return BadRequest("Güncelleme sırasında hata oluştu!");
         }
 
-        [HttpPatch]
+        [HttpPatch("UpdateStage")]
         public async Task<IActionResult> UpdateStage(UpdateWorkStage model)
         {
             var isOk = await _workService.Update(model);
