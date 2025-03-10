@@ -1,6 +1,8 @@
+using System.Runtime.CompilerServices;
 using AutoMapper;
 using WorkFvApi.DTO.WorkDTO;
 using WorkFvApi.Models;
+using WorkFvApi.VM;
 
 
 public class WorkService : IWorkService
@@ -20,12 +22,12 @@ public class WorkService : IWorkService
     }
     public async Task<WorkDto> GetById(int id)
     {
-        var work = await _genericRepo.GetByIdAsync(id); 
+        var work = await _genericRepo.GetByIdAsync(id);
         if (work == null)
         {
-            return null;  
+            return null;
         }
-        return _mapper.Map<WorkDto>(work);  
+        return _mapper.Map<WorkDto>(work);
     }
 
     public async Task<WorkDto> Create(WorkDto work)
@@ -34,27 +36,45 @@ public class WorkService : IWorkService
         var result = await _genericRepo.CreateAsync(dmoModel);
         return _mapper.Map<WorkDto>(result);
     }
-    
-     public async Task<WorkDto> Delete(int id)
+
+    public async Task<WorkDto> Delete(int id)
     {
-        
+
         var isDeleted = await _genericRepo.DeleteAsync(id);
-        
+
         if (!isDeleted)
         {
-            return null;  
+            return null;
         }
 
-        
+
         return new WorkDto
         {
             WorkId = id,
-            WorkName = "Silinen İş", 
-            WorkComment = "Silinen İşin Açıklaması" 
+            WorkName = "Silinen İş",
+            WorkComment = "Silinen İşin Açıklaması"
         };
     }
+    public async Task<bool> UpdateWork(UpdateWork model)
+    {
+        var existingWork = await _genericRepo.GetByIdAsync(model.WorkId);
+        if (existingWork == null)
+        {
+            return false;
+        }
+        if (!string.IsNullOrEmpty(model.WorkName))
+            existingWork.WorkName = model.WorkName;
 
-    public async Task<bool> Update (UpdateWorkStage model)
+        if (!string.IsNullOrEmpty(model.WorkComment))
+            existingWork.WorkComment = model.WorkComment;
+
+        if (!string.IsNullOrEmpty(model.PdfUrl))
+            existingWork.PdfUrl = model.PdfUrl;
+
+        return await _genericRepo.UpdateAsync(existingWork);
+
+    }
+    public async Task<bool> Update(UpdateWorkStage model)
     {
         var existingWork = await _genericRepo.GetByIdAsync(model.WorkId);
         if (existingWork == null)
@@ -62,7 +82,7 @@ public class WorkService : IWorkService
             return false;
         }
         existingWork.WorkStageId = model.StageId;
-        if(model.StageId == 4)
+        if (model.StageId == 4)
         {
             existingWork.WorkAndDate = DateTime.Now;
         }

@@ -5,6 +5,7 @@ using WorkFvApi.DTO.WorkDTO;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using WorkFvApi.VM;
 
 
 namespace WorkFvApi.Controllers
@@ -82,6 +83,18 @@ namespace WorkFvApi.Controllers
 
             return NoContent();
         }
+        [HttpPatch]
+        public async Task<IActionResult> UpdateWork([FromBody] UpdateWork model)
+        {
+            var isUpdated = await _workService.UpdateWork(model);
+
+            if (isUpdated)
+            {
+                return Ok("İş başarıyla güncellendi");
+            }
+
+            return BadRequest("Güncelleme sırasında hata oluştu!");
+        }
 
         [HttpPatch]
         public async Task<IActionResult> UpdateStage(UpdateWorkStage model)
@@ -126,7 +139,7 @@ namespace WorkFvApi.Controllers
                 fileUrl = $"{Request.Scheme}://{Request.Host}/uploads/{uniqueFileName}";
             }
 
-           
+
             var newWork = new Models.Work
             {
                 WorkName = model.WorkName,
@@ -134,7 +147,7 @@ namespace WorkFvApi.Controllers
                 WorkStageId = model.WorkStageId ?? 3,
                 WorkStartDate = model.WorkStartDate,
                 WorkAndDate = model.WorkAndDate,
-                PdfUrl = fileUrl 
+                PdfUrl = fileUrl
             };
 
             _context.Works.Add(newWork);

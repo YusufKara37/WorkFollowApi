@@ -1,4 +1,5 @@
 using WorkFvApi.DTO.WorkDTO;
+using WorkFvApi.VM;
 
 
 public interface IWorkService
@@ -8,4 +9,5 @@ public interface IWorkService
     Task<WorkDto> Create(WorkDto work);
     Task<WorkDto> Delete(int workId);
     Task<bool> Update (UpdateWorkStage model);
+     Task<bool> UpdateWork(UpdateWork model);
 }
